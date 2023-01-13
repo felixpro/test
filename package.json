@@ -18,7 +18,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "cy:open": "cypress open"
+    "cy:open": "cypress open",
+    "cy:xray": "node_modules/cypress/bin/cypress run --spec ./cypress/features/*.feature"
   },
   "eslintConfig": {
     "extends": [
