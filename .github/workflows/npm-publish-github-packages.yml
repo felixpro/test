@@ -57,8 +57,8 @@ jobs:
     - name: "Import results to Xray using GH action"
       uses: mikepenz/xray-action@v2.3.0
       with:
-       username: "B6539A608CA043E687A53283D6ED3CAF"
-       password: "aa4c750d4565f125e48362f7386b60c0e7cbf2616db60b6199509db076656656"
+       username: ${{ secrets.XRAYCLOUD_CLIENT_ID }}
+       password: ${{ secrets.XRAYCLOUD_CLIENT_SECRET }}
        xrayCloud: "true"
        testFormat: "cucumber"
        testPaths: "cucumber-report.json"
