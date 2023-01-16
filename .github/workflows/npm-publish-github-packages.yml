@@ -27,10 +27,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: generate auxiliary JSON for authenticating with Xray cloud and obtain token
+    - name: generate token for authenticating with Xray cloud 
       run: |
-        cat cloud_auth.json  | sed s/CLIENT_ID/${{ secrets.XRAYCLOUD_CLIENT_ID }}/g | sed s/CLIENT_SECRET/${{ secrets.XRAYCLOUD_CLIENT_SECRET }}/g > cloud_auth.json
-        echo token=$(curl -H "Content-Type: application/json" -X POST --data @"cloud_auth.json" ${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/authenticate| tr -d '"') >> $GITHUB_ENV
+        token=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id":${{ secrets.XRAYCLOUD_CLIENT_ID }}, "client_secret": ${{ secrets.XRAYCLOUD_CLIENT_SECRET }}}' ${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/authenticate| tr -d '"')
     - name: Run Cypress tests
       uses: cypress-io/github-action@v4
       continue-on-error: true
@@ -46,4 +45,4 @@ jobs:
         cat test_exec.json
     - name: "Import results to Xray (cloud) using multipart endpoint"
       run: |
-        curl -X POST -H "Authorization: Bearer ${{ env.token }}"  -F info=@test_exec.json -F results=@"cucumber-report.json" "${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/import/execution/cucumber/multipart"
+        curl -X POST -H "Authorization: Bearer $token"  -F info=@test_exec.json -F results=@"cucumber-report.json" "${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/import/execution/cucumber/multipart"
