@@ -42,4 +42,4 @@ jobs:
         cat test_exec.json
     - name: Import results to Xray
       run: |
-        curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer ${{ env.token }}"  --data @"cucumber-report.json" https://xray.cloud.getxray.app/api/v1/import/execution/cucumber
+        curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer ${{ env.token }}"  --data @"cucumber-report.json" https://xray.cloud.getxray.app/api/v1/import/execution
