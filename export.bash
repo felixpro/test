@@ -15,7 +15,7 @@ curl -H "Content-Type: multipart/form-data" -H "Authorization: Bearer $token"  -
 
 BASE_URL=https://xray.cloud.getxray.app
 token=$(curl -H "Content-Type: application/json" -X POST --data @"cloud_auth.json" $BASE_URL/api/v2/authenticate| tr -d '"')
-curl -H "Content-Type: application/json" -X GET -H "Authorization: Bearer $token" "$BASE_URL/api/v2/export/cucumber?keys=CALC-632;CALC-633" -o features.zip
+curl -H "Content-Type: application/json" -X GET -H "Authorization: Bearer $token" "$BASE_URL/api/v2/export/cucumber?keys=XP-13" -o features.zip
  
 rm -rf features/*.feature
 unzip -o features.zip -d features
