@@ -46,13 +46,5 @@ jobs:
         cat test_exec.json
     - name: "Import results to Xray (cloud) using multipart endpoint"
       run: |
-        curl -X POST -H "Authorization: Bearer ${{ env.token }}"  -F info=@test_exec.json -F results=@"cucumber-report.json" "${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/import/execution/cucumber/multipart"
-    - name: "Import results to Xray using GH action"
-      uses: mikepenz/xray-action@v2.3.0
-      with:
-       username: ${{ secrets.XRAYCLOUD_CLIENT_ID }}
-       password: ${{ secrets.XRAYCLOUD_CLIENT_SECRET }}
-       xrayCloud: "true"
-       testFormat: "cucumber"
-       testPaths: "cucumber-report.json"
-       testExecutionJson: "test_exec.json"
+        token=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id":${{ secrets.XRAYCLOUD_CLIENT_ID }}, "client_secret": ${{ secrets.XRAYCLOUD_CLIENT_SECRET }}}' $BASE_URL/api/v2/authenticate| tr -d '"')
+        curl -X POST -H "Authorization: Bearer $token"  -F info=@test_exec.json -F results=@"cucumber-report.json" "${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/import/execution/cucumber/multipart"
