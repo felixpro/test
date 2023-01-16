@@ -31,7 +31,6 @@ jobs:
       uses: cypress-io/github-action@v4
       continue-on-error: true
       with:
-          # Specify Browser; container image has Firefox
         browser: ${{ env.BROWSER }}
         spec: cypress/integration/**/*.feature
     - name: generate auxiliary JSON to define some fields on the Test Execution to be created
@@ -40,7 +39,7 @@ jobs:
     - name: debug testexec json
       run: |
         cat test_exec.json
-    - name: "Import results to Xray (cloud) using multipart endpoint"
+    - name: Import results to Xray
       run: |
         token=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id":${{ secrets.XRAYCLOUD_CLIENT_ID }}, "client_secret": ${{ secrets.XRAYCLOUD_CLIENT_SECRET }}}' ${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/authenticate| tr -d '"')
-        curl -X POST -H "Authorization: Bearer $token"  -F info=@test_exec.json -F results=@"cucumber-report.json" "${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/import/execution/cucumber/multipart"
+        curl -X POST -H "Authorization: Bearer $token"  -F info=@test_exec.json -F results=@cucumber-report.json "${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/import/execution/cucumber/multipart"
