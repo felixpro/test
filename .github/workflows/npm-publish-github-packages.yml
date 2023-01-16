@@ -43,4 +43,4 @@ jobs:
     - name: Import results to Xray
       run: |
         token=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id":${{ secrets.XRAYCLOUD_CLIENT_ID }}, "client_secret": ${{ secrets.XRAYCLOUD_CLIENT_SECRET }}}' ${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/authenticate| tr -d '"')
-        curl -X POST -H "Authorization: Bearer token"  -F info=@test_exec.json -F results=@"cucumber-report.json" "${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/import/execution/cucumber/multipart"
+        curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer $token"  --data @"cucumber-report.json" https://xray.cloud.getxray.app/api/v1/import/execution/cucumber
