@@ -17,13 +17,17 @@ jobs:
       matrix:
         node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    - name: generate auxiliary JSON for authenticating with Xray cloud and obtain token
+      run: |
+        cat cloud_auth.json.sample  | sed s/CLIENT_ID/${{ secrets.XRAYCLOUD_CLIENT_ID }}/g | sed s/CLIENT_SECRET/${{ secrets.XRAYCLOUD_CLIENT_SECRET }}/g > cloud_auth.json
+        echo token=$(curl -H "Content-Type: application/json" -X POST --data @"cloud_auth.json" ${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/authenticate| tr -d '"') >> $GITHUB_ENV
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+        
     - name: Run Cypress tests
       uses: cypress-io/github-action@v4
       continue-on-error: true
@@ -38,5 +42,4 @@ jobs:
         cat test_exec.json
     - name: Import results to Xray
       run: |
-        token=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id":${{ secrets.XRAYCLOUD_CLIENT_ID }}, "client_secret": ${{ secrets.XRAYCLOUD_CLIENT_SECRET }}}' ${{ secrets.XRAYCLOUD_BASE_URL }}/api/v1/authenticate| tr -d '"')
-        curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer $token"  --data @"cucumber-report.json" https://xray.cloud.getxray.app/api/v1/import/execution/cucumber
+        curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer ${{ env.token }}"  --data @"cucumber-report.json" https://xray.cloud.getxray.app/api/v1/import/execution/cucumber
